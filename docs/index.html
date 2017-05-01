@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="./reveal.css">
     <link rel="stylesheet" href="./white.css">
     <link rel="stylesheet" href="./custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
   </head>
   <body>
     <div class="reveal">
@@ -17,59 +19,204 @@
 
         <section>
           <section>
-            <h2>Installing OpenVibe</h2>
+            <h2>Installing OpenVibe...</h2>
+            <ul>
+              <li>Visit the OpenVibe website <a href="http://openvibe.inria.fr/downloads/">downloads page</a></li>
+              <li>At time of writing, <b>v1.3.0</b> supports windows and linux</li>
+            </ul>
           </section>
           <section>
-            <h2>Generate with the Server</h2>
+            <h2>...Run the Designer</h2>
+            <pre><code data-trim>~/openvibe$ ./dist/openvibe-designer.sh</code></pre>
+            <img src='./img/Designer.png' />
           </section>
           <section>
-            <h2>Visualize with the Designer</h2>
+            <h2>...What‽‽</h2>
+            <b>Noise generator</b>: Generate fake EEG time series. <br />
+            <b>Signal display</b>: Display the time series. <br />
+            Now play with some settings! <br />
+            <img src='./img/ScanSettings.png' />
           </section>
         </section>
 
         <section>
           <h2>Download sample data</h2>
+          Some public EEG data sets exist - UCSD has a <a href="https://sccn.ucsd.edu/~arno/fam2data/publicly_available_EEG_data.html">good collection</a>.
+          We'll use the 2015 Music BCI data set available from <a href="http://bnci-horizon-2020.eu/database/data-sets">BCNI Horizon</a> (set #15), with paper
+          describing the data from <a href="http://doc.ml.tu-berlin.de/bbci/BNCIHorizon2020-MusicBCI/BNCI_MusicBCI.pdf">TU Berlin</a>. <br /> <br />
+          <b>Warning: 554Mb!</b> EEG data is big...
         </section>
 
         <section>
           <section>
             <h2>Load and Visualize</h2>
+            Lots of data formats, chances are you'll need some processing...<br />
+            ☹ <br />
+            A bunch are supported (see the <a href="http://openvibe.inria.fr/supported-file-formats/">list</a>), <br />
+            for now we'll use the <a href="http://openvibe.inria.fr/documentation/1.3.0/Doc_BoxAlgorithm_CSVFileReader.html">CSV Reader</a> and some python.
           </section>
           <section>
-            <h2>Rewrite into CSV format</h2>
+            <h2>Rewrite signal values into CSV format</h2>
+<pre><code class="py" data-trim>  import scipy.io as sio
+  import csv
+
+  SUBJECT = 'aak'
+  IN_FILE = 'data/musicbci_VP%s.mat' % SUBJECT
+  OUT_FILE = 'dataCSV/%s_signal.csv' % SUBJECT
+
+  print "Loading matlab file %s..." % IN_FILE
+  data = sio.loadmat(IN_FILE)
+  readings = data['data'][0]['X'][0]
+
+  # First line: Row count, then channel names, then sample rate
+  channelNames = [str(c[0]) for c in data['data'][0]['clab'][0][0]]
+  sampleRate = data['data'][0]['fs'][0][0][0]
+
+  print "# Readings: %d" % readings.shape[0]
+  print "# Channels: %d" % len(channelNames)
+  print "Sample rate: %d hz" % sampleRate
+
+  # sampleRate samples/sec = 1000 / sampleRate ms/sample
+  secPerSample = 1.0 / sampleRate
+
+  print "Writing to %s..." % OUT_FILE
+  with open(OUT_FILE, 'wb') as csvfile:
+      writer = csv.writer(csvfile)
+      writer.writerow(['Time (s)'] + channelNames + ['Sampling Rate'])
+      # First row has extra rate:
+      writer.writerow([0.0] + readings[0].tolist() + [sampleRate])
+      for r in range(1, readings.shape[0]):
+          writer.writerow([r * secPerSample] + readings[r].tolist())
+
+  print "Done!"</code></pre>
           </section>
           <section>
-            <h2>In Designer</h2>
+            <h2>Run conversion...</h2>
+<pre><code class="sh" data-trim>~/openvibe/musicbci$ time python signalToCSV.py
+Loading matlab file data/musicbci_VPaak.mat...
+# Readings: 2277240
+# Channels: 64
+Sample rate: 200 hz
+Writing to dataCSV/aak_signal.csv...
+Done!
+
+real	2m30.080s
+user	2m25.902s
+sys	0m3.841s</code></pre>
+          </section>
+          <section>
+            <h2>View in Designer</h2>
+            Enable <a href="http://openvibe.inria.fr/faq/#unstable">unstable</a> boxes to use CSVFileReader.
+            <img src="./img/BCIDataLoaded.png" />
           </section>
         </section>
 
         <section>
           <section>
             <h2><i>Concept</i>: Frequency Analysis</h2>
+            Different frequencies in the signal are correlated to different things:
+            <table>
+              <thead><tr><td>Type</td><td>Frequency</td><td>Association (ish...)</td></tr></thead>
+              <tbody>
+                <tr><td>Delta</td><td>0.1 - 3Hz</td><td>Sleep, Healing</td></tr>
+                <tr><td>Theta</td><td>4 - 7Hz</td><td>Meditation, Memory</td></tr>
+                <tr><td>Alpha</td><td>8 - 15Hz</td><td>Relaxation, Creativity</td></tr>
+                <tr><td>Beta</td><td>16 - 30Hz</td><td>Alertness, Cognition</td></tr>
+                <tr><td>Gamma</td><td>31 - 100Hz</td><td>Focus, Consciousness</td></tr>
+              </tbody>
+            </table>
           </section>
           <section>
             <h2>Power bands in designer</h2>
+            To set it up... <br />
+            <ol>
+              <li>Read signal from CSV, as before.</li>
+              <li>Use <i>Channel selector</i> box to pick some channels.</li>
+              <li>Convert to frequencies with <i>Spectral Analysis (FFT)</i></li>
+              <li>Draw to screen with <i>Power spectrum display</i></li>
+            </ol>
           </section>
           <section>
-            <h2>TODO: improving. spectrogram?</h2>
+            <h2>Result</h2>
+            NB: Historgram looks bad :( One place where OpenVibe isn't great.
+            <img src='./img/psd.png' />
+          </section>
+          <section>
+            <h2><i>Example:</i> Alpha Waves</h2>
+            <ul>
+              <li>Add <i>Temporal filter</i> to restrict to 8-15Hz</li>
+              <li>Display the result with the usual signal display</li>
+              <li>Also add a <i>Spectrum average</i> and display with <i>Matrix display</i></li>
+            </ul>
+            <img src='./img/alphaFilter.png' />
           </section>
         </section>
 
         <section>
           <section>
             <h2><i>Concept</i>: ICA</h2>
+            <b>I</b>ndependant <b>C</b>omponent <b>A</b>nalysis is where multiple signals can be separated out into independant parts. Useful for:
+            <ul>
+              <li>Noise reduction: find the 'blink' component, and remove it</li>
+              <li>Virtual channels: e.g. reduce to 'frontal' signal, 'left hemisphere', ...</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Example</h2>
+            Reminder - placement looks like this:
+            <img src='./img/1020.gif' /> <br />
+            We'll look at F7/F9, and P8/P10.
           </section>
           <section>
             <h2>In Designer</h2>
+            <ul>
+              <li>Apply channel selection for P8;P10;F7;F9</li>
+              <li>Run through <i>Independant Component Analysis</i> box</li>
+            </ul>
+            <img src='./img/ica.png' />
+            IC1 ~ front left, IC2 ~ back right.
           </section>
         </section>
 
         <section>
           <section>
             <h2><i>Concept</i>: Events</h2>
+            TODO
           </section>
           <section>
             <h2>Rewrite CSV format</h2>
+<pre><code class="py" data-trim>
+  import scipy.io as sio
+  import csv
+
+  SUBJECT = 'aak'
+  IN_FILE = 'data/musicbci_VP%s.mat' % SUBJECT
+  OUT_FILE = 'dataCSV/%s_events.csv' % SUBJECT
+
+  print "Loading matlab file %s..." % IN_FILE
+  data = sio.loadmat(IN_FILE)
+
+  trials = data['data'][0]['trial'][0]
+  values = data['data'][0]['y'][0]
+  assert trials.shape == values.shape
+
+  eventCount = trials.shape[1]
+  sampleRate = int(round(data['data'][0]['fs'][0][0][0]))
+  print "# Events: %d" % eventCount
+
+  print "Writing to %s..." % OUT_FILE
+  with open(OUT_FILE, 'wb') as csvfile:
+  writer = csv.writer(csvfile)
+  writer.writerow(['Time (s)', 'Identifier', 'Duration'])
+  # First row has extra rate:
+  for i in range(eventCount):
+  msOffset = int(round(trials[0, i])) * 1000 / sampleRate
+  # eID = values[0, i]
+  eID = 33024 + values[0, i] # HACK: http://openvibe.inria.fr/stimulation-codes/
+  writer.writerow([msOffset / 1000.0, eID, 1])
+
+  print "Done!"
+</code></pre>
           </section>
           <section>
             <h2>In Designer</h2>
@@ -79,6 +226,7 @@
         <section>
           <section>
             <h2><i>Concept</i>: Event Related Potentials (ERPs)</h2>
+            TODO
           </section>
           <section>
             TODO: show ERP, mean and variance, save to file, ...
@@ -88,19 +236,38 @@
         <section>
           <section>
             <h2><i>Concept</i>: Localization</h2>
+            Given positions of sensors on the scalp, can we convert them back to find signal strength at locations internally? <br />
+            <a href="http://www.scholarpedia.org/article/Source_localization">LOTS of techniques</a>
+            (Dipole modelling, Beam forming, Bayesian MAP, sLORETA), ...no clear winner.
           </section>
           <section>
             <h2>In Designer, 2D</h2>
+            <ul>
+              <li>Load data from CSV, as before, and exclude "EOGvu" (reference).</li>
+              <li>Load locations from .txt, using localization file reader.</li>
+              <li>Display with <i>2D Topographic Map</i>.</li>
+            </ul>
+            <img src='./img/2dtop.png' height="50%"/>
           </section>
           <section>
             <h2>Bonus! '3D'</h2>
+            <img src='./img/3dtop.png' />
+            N.B: You should create your own locations, but see openvibe/dist/share/openvibe/electrode_sets for an example.
           </section>
         </section>
 
         <section>
           <section>
             <h2>Live streaming!</h2>
-            LSL etc...
+            TODO: LSL etc...
+          </section>
+          <section>
+            <h2>= Acquisition Server</h2>
+            Generates data - <br />Random / from file / live from device.
+            <pre><code data-trim>
+~/openvibe$ ./dist/openvibe-acquisition-server.sh
+            </code></pre>
+            <img src='./img/AcquisitionServer.png' />
           </section>
           <section>
             <h2>Muse LSL</h2>
@@ -122,7 +289,11 @@
     </div>
     <script src="./reveal.js"></script>
     <script>
-      Reveal.initialize({ slideNumber: 'c/t' });
+      Reveal.initialize({
+        history: true,
+        slideNumber: 'c/t',
+      });
+      hljs.initHighlightingOnLoad();
     </script>
   </body>
 </html>

@@ -4,3 +4,15 @@
   right: 0;
   top: 0;
 }
+
+.reveal section {
+  font-size: 32px;
+}
+
+.reveal thead {
+  font-weight: bold;
+}
+
+.reveal tbody > tr > td:first-child {
+  font-weight: bold;
+}
