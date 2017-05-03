@@ -1,3 +1,8 @@
+.reveal section img {
+  display: block;
+  margin: 0 auto;
+}
+
 .reveal .slide-number {
   font-size: 28px;
   bottom: auto;
@@ -15,4 +20,8 @@
 
 .reveal tbody > tr > td:first-child {
   font-weight: bold;
+}
+
+.reveal h4 {
+  text-align: left;
 }

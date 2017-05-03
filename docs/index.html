@@ -31,7 +31,7 @@
             <img src='./img/Designer.png' />
           </section>
           <section>
-            <h2>...What‽‽</h2>
+            <h2>...What is going on‽‽</h2>
             <b>Noise generator</b>: Generate fake EEG time series. <br />
             <b>Signal display</b>: Display the time series. <br />
             Now play with some settings! <br />
@@ -181,7 +181,9 @@ sys	0m3.841s</code></pre>
         <section>
           <section>
             <h2><i>Concept</i>: Events</h2>
-            TODO
+            Some applications for EEG look at signal after an event happens. <br />
+            <img src='./img/erp.jpg' height="50%"/>
+            <b>Need</b>: Timings for events
           </section>
           <section>
             <h2>Rewrite CSV format</h2>
@@ -220,16 +222,45 @@ sys	0m3.841s</code></pre>
           </section>
           <section>
             <h2>In Designer</h2>
+            <i>CSV File Reader</i>
+            <ul>
+              <li>Right-Click 🡺 Modify Outputs 🡺 Output Stream 🡺 Stimulations</li>
+              <li>Purple arrow = correct (see <a href="http://openvibe.inria.fr/stream-structures/">here</a>)</li>
+            </ul>
+            <img src='./img/events.png' />
           </section>
         </section>
 
         <section>
           <section>
             <h2><i>Concept</i>: Event Related Potentials (ERPs)</h2>
-            TODO
+            Lots of research into what is expected after certain stimuli! <br />
+            e.g. <a href="https://en.wikipedia.org/wiki/P300_(neuroscience)">P300</a> is fairly stable, and can be decoded with
+            <a href="https://github.com/alexandrebarachant/muse-lsl/blob/master/notebooks/P300%20with%20Muse.ipynb">Muse</a>. <br />
+            <ul>
+              <li>P = <b>P</b>ositive voltage (= down...)</li>
+              <li>300 = <b>300</b> milliseconds after stimulus
+            </ul>
+            <img src='./img/p300.png' />
+            N.B: This is an average <i>'epoch'</i> = segment of signal.
           </section>
           <section>
-            TODO: show ERP, mean and variance, save to file, ...
+            A bit more involved... <br />
+            <ul>
+              <li>Two CSV readers, load signal and events</li>
+              <li>Filter for some channels (for simplicity)</li>
+              <li>Stimulation-based epoching</li>
+              <ul><li><a href="http://openvibe.inria.fr/stimulation-codes/">OVTK_StimulationId_Label_03</a> used</li></ul>
+              <li>Draw with signal display, plus ERP plot</li>
+            </ul>
+            <img src='./img/erpShow.png' />
+          </section>
+          <section>
+            <h2>Extra</h2>
+            <ul>
+              <li><i>Epoch Variance</i> box allows the calculation of the mean and variance across multiple epochs.</li>
+              <li><i>ERP plot</i> can also save the result to file on a particular signal.</li>
+            </ul>
           </section>
         </section>
 
@@ -259,21 +290,35 @@ sys	0m3.841s</code></pre>
         <section>
           <section>
             <h2>Live streaming!</h2>
-            TODO: LSL etc...
+            We can process from old files, can we process from new live data?<br />
+            OpenVibe supports live data too, using the <i>Acquisition server.</i>
           </section>
           <section>
-            <h2>= Acquisition Server</h2>
-            Generates data - <br />Random / from file / live from device.
-            <pre><code data-trim>
-~/openvibe$ ./dist/openvibe-acquisition-server.sh
-            </code></pre>
+            <h2>Acquisition Server</h2>
+            Used to input data live from device, but can also read from file or make random signal.
+            <pre><code data-trim>~/openvibe$ ./dist/openvibe-acquisition-server.sh</code></pre>
             <img src='./img/AcquisitionServer.png' />
           </section>
           <section>
-            <h2>Muse LSL</h2>
+            <h2>Muse (via LSL)</h2>
+            To get Muse working with OpenVibe, the simplest way is to get them both talking the LSL format
+            (= <a href="https://github.com/sccn/labstreaminglayer"><b>L</b>ab <b>S</b>treaming <b>L</b>ayer</a>). <br />
+            <h4>1) Muse -> LSL</h4>
+            <pre><code data-trim>$~/muse$ muse-io --lsl-eeg muselsl</code></pre>
+            <h4>2) LSL -> Aquisition Server</h4>
+            TODO - image <br />
+            <b>N.B:</b> With newer Muse, you'll want the <a href="https://github.com/alexandrebarachant/muse-lsl">muse-lsl</a> library.
           </section>
           <section>
-            <h2>OpenBCI LSL</h2>
+            <h4>View in designer</h4>
+            TODO
+          </section>
+          <section>
+            <h2>OpenBCI</h2>
+            OpenBCI makes this even easier, with the Acquisition server supporting it by default.<br />
+            <h4>1) OpenBCI to 'PC' mode and plug in UBS</h4>
+            <h4>2) Aquisition server:</h4>
+            TODO - image <br />
           </section>
         </section>
 
@@ -282,7 +327,7 @@ sys	0m3.841s</code></pre>
         </section>
 
         <section>
-          <h2>TODO: Output frequency-shifted audio? :)</h2>
+          <h2>TODO: Closing infor</h2>
         </section>
       </div>
 
