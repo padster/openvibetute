@@ -10,11 +10,67 @@
     <div class="reveal">
       <div class="slides">
         <section>
-          <h2>TODO: Intro to EEG for a few slides...</h2>
+          <section>
+            <h2>So you want to read brains?</h2>
+            <img src='./img/devices.png' />
+          </section>
+          <section>
+            <h2>Today</h2>
+            <ol>
+              <li>Introduction to EEG</li>
+              <li>Walk through EEG terms and technology using OpenVibe</li>
+              <li>Given enough pointers for people trying their own experiments</li>
+            </ol>
+          </section>
         </section>
 
         <section>
-          <h2>What is OpenVibe?</h2>
+          <section>
+            <h2>Intro: What are brains?</h2>
+            Very roughly...a giant connected information network. <br />
+            <ul>
+              <li>Nodes = <b>Neurons</b>, ~100 billion (?)
+              <li>Edges = <b>Synapses</b>, ~100 trillion (?)
+              <li>Signal = electrical current
+            </ul> <br /> <br />
+            plus lots of other things (glial cells, neurotransmitters, blood, ...)
+          </section>
+          <section>
+            <h2>What is EEG?</h2>
+            <ul>
+              <li>Non-invasive!</li>
+              <li>Good temporal resolution: Fast</li>
+              <li>Bad spatial resolution: measure voltage <i>on scalp</i></li>
+              <li>Lots of <a href="http://www.math.tau.ac.il/~nin/Courses/Seminar14a/EEG_AlphaTheta1999.pdf">research</a>
+                into <a href="https://mitpress.mit.edu/books/introduction-event-related-potential-technique">what</a>
+                can be <a href="https://www.ncbi.nlm.nih.gov/pubmed/10686361">identified</a>.</li>
+              <li>Sensitive: voltage is around µV, susceptible to movement, ...</li>
+            </ul>
+            <img width='40%' src='./img/neurons.png' />
+          </section>
+          <section>
+            <h2>Example!</h2>
+            <ul>
+              <li>X axis = Time</li>
+              <li>Y axis = Voltage, one row per sensor</li>
+            </ul>
+            <img width='80%' src='./img/eegExample.png' />
+            What to do with this? ...
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>OpenBCI</h2>
+            Hardware and software for running your own EEG system.
+            <img src='./img/bciCyton.jpg' />
+          </section>
+          <section>
+            <h2>OpenVibe</h2>
+            Software specializing in real-time processing of brain signals. <br />
+            Good for prototyping (and explaining) things!</br /> <br />
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/poX_DVB711o" frameborder="0" allowfullscreen></iframe>
+          </section>
         </section>
 
         <section>
@@ -40,7 +96,7 @@
         </section>
 
         <section>
-          <h2>Download sample data</h2>
+          <h2>Option: use existing data</h2>
           Some public EEG data sets exist - UCSD has a <a href="https://sccn.ucsd.edu/~arno/fam2data/publicly_available_EEG_data.html">good collection</a>.
           We'll use the 2015 Music BCI data set available from <a href="http://bnci-horizon-2020.eu/database/data-sets">BCNI Horizon</a> (set #15), with paper
           describing the data from <a href="http://doc.ml.tu-berlin.de/bbci/BNCIHorizon2020-MusicBCI/BNCI_MusicBCI.pdf">TU Berlin</a>. <br /> <br />
@@ -50,8 +106,11 @@
         <section>
           <section>
             <h2>Load and Visualize</h2>
+            <br />
             Lots of data formats, chances are you'll need some processing...<br />
-            ☹ <br />
+            <br />
+            <span style="font-size: 150%">☹</span> <br />
+            <br />
             A bunch are supported (see the <a href="http://openvibe.inria.fr/supported-file-formats/">list</a>), <br />
             for now we'll use the <a href="http://openvibe.inria.fr/documentation/1.3.0/Doc_BoxAlgorithm_CSVFileReader.html">CSV Reader</a> and some python.
           </section>
@@ -138,8 +197,9 @@ sys	0m3.841s</code></pre>
           </section>
           <section>
             <h2>Result</h2>
-            NB: Historgram looks bad :( One place where OpenVibe isn't great.
-            <img src='./img/psd.png' />
+            <img width='70%' src='./img/psd.png' />
+            NB: Historgram looks bad :( One place where OpenVibe isn't great. <br />
+            The <a href="http://openbci.com/images/v2-2.gif">display</a> from OpenBCI is much nicer...
           </section>
           <section>
             <h2><i>Example:</i> Alpha Waves</h2>
@@ -162,10 +222,10 @@ sys	0m3.841s</code></pre>
             </ul>
           </section>
           <section>
-            <h2>Example</h2>
-            Reminder - placement looks like this:
+            <h2>Localization</h2>
+            There is a standard '10-20' placement system:
             <img src='./img/1020.gif' /> <br />
-            We'll look at F7/F9, and P8/P10.
+            For this example, we'll look at F7/F9, and P8/P10.
           </section>
           <section>
             <h2>In Designer</h2>
@@ -182,8 +242,9 @@ sys	0m3.841s</code></pre>
           <section>
             <h2><i>Concept</i>: Events</h2>
             Some applications for EEG look at signal after an event happens. <br />
+            OpenVibe calls these <i>'stimulations'</i>.
             <img src='./img/erp.jpg' height="50%"/>
-            <b>Need</b>: Timings for events
+            <b>BUT</b>: You need timings for events
           </section>
           <section>
             <h2>Rewrite CSV format</h2>
@@ -320,15 +381,43 @@ sys	0m3.841s</code></pre>
             <h4>2) Aquisition server:</h4>
             TODO - image <br />
           </section>
+          <section>
+            <h2>Saving...</h2>
+            TODO
+          </section>
         </section>
 
         <section>
-          <h2>TODO: Connectivity measures?</h2>
+          <h2>Bonus: Connectivity measures?</h2>
         </section>
 
         <section>
-          <h2>TODO: Closing infor</h2>
+          <section>
+            <h2>More on OpenVibe...</h2>
+            <br />
+            Some extra stuff that wasn't covered, but for those interested...
+            <br /><br />
+            <ul>
+              <li><i>Connectivity</i> box for <a href='http://openvibe.inria.fr/documentation/1.0.0/Doc_BoxAlgorithm_ConnectivityMeasure.html'>synchronicity</a>
+                 between various parts of the brain.</li>
+              <li>Automatic Classification <i>trainer</i> and <i>processor</i>: use machine learning techniques (SVM, LDA) to learn how to identify various events, if possible</li>
+            </ul>
+          </section>
+          <section>
+            <h2>More on <a href="http://neurotechx.com/">NeuroTechX</a>...</h2>
+            International non-profit building a community of neuro technology enthusiasts.
+            <ul>
+              <li>Join the slack: <a href="https://neurotechx.herokuapp.com/">https://neurotechx.herokuapp.com/</a></li>
+              <li>Keep an eye on future events in Vancouver, posted on <a href="https://www.meetup.com/NeuroTechVAN/">Meetup</a></li>
+            </ul>
+          </section>
+          <section>
+            <h2>Thanks!</h2>
+            padsterpat@gmail.com <br />
+            https://github.com/padster <br />
+          </section>
         </section>
+
       </div>
 
     </div>
