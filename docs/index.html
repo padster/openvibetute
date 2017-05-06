@@ -11,8 +11,9 @@
       <div class="slides">
         <section>
           <section>
-            <h2>So you want to read brains?</h2>
-            <img src='./img/devices.png' />
+            <h2>So you want to read minds?</h2>
+            You can't (yet), but we'll talk about what you can do... <br /> <br />
+            <img width='70%' src='./img/devices.png' />
           </section>
           <section>
             <h2>Today</h2>
@@ -22,12 +23,27 @@
               <li>Given enough pointers for people trying their own experiments</li>
             </ol>
           </section>
+          <section>
+            <h2>Hi!</h2>
+            Patrick Coleman
+            <div style="display: flex" />
+            <img src='./img/profilePic.jpg' style="height: 196px; width: 196px; align-self: center;" />
+            <div style="padding-left: 16px">
+              <ul>
+                <li>Former: software engineer / maths student.</li>
+                <li>Now: Going into neuroscience, specializing in data processing.</li>
+                <li>Member of Vancouver NeuroTechX</li>
+                <li>Code: <a href="http://github.com/padster">http://github.com/padster</a></li>
+                <li>Blog: <a href="http://github.com/padster">https://padsterprogramming.blogspot.com</a></li>
+              </ul>
+            </div>
+          </section>
         </section>
 
         <section>
           <section>
             <h2>Intro: What are brains?</h2>
-            Very roughly...a giant connected information network. <br />
+            Very abstractly...a giant connected information network. <br />
             <ul>
               <li>Nodes = <b>Neurons</b>, ~100 billion (?)
               <li>Edges = <b>Synapses</b>, ~100 trillion (?)
@@ -37,6 +53,7 @@
           </section>
           <section>
             <h2>What is EEG?</h2>
+            Sensors to read electrical signal.
             <ul>
               <li>Non-invasive!</li>
               <li>Good temporal resolution: Fast</li>
@@ -46,7 +63,7 @@
                 can be <a href="https://www.ncbi.nlm.nih.gov/pubmed/10686361">identified</a>.</li>
               <li>Sensitive: voltage is around µV, susceptible to movement, ...</li>
             </ul>
-            <img width='40%' src='./img/neurons.png' />
+            <img width='30%' src='./img/neurons.png' />
           </section>
           <section>
             <h2>Example!</h2>
@@ -55,18 +72,18 @@
               <li>Y axis = Voltage, one row per sensor</li>
             </ul>
             <img width='80%' src='./img/eegExample.png' />
-            What to do with this? ...
+            How to measure? How to process? ...
           </section>
         </section>
 
         <section>
           <section>
-            <h2>OpenBCI</h2>
+            <h2>Measure example: <a href='http://openbci.com'>OpenBCI</a></h2>
             Hardware and software for running your own EEG system.
             <img src='./img/bciCyton.jpg' />
           </section>
           <section>
-            <h2>OpenVibe</h2>
+            <h2>Process example: <a href='http://openvibe.inria.fr'>OpenVibe</a></h2>
             Software specializing in real-time processing of brain signals. <br />
             Good for prototyping (and explaining) things!</br /> <br />
             <iframe width="560" height="315" src="https://www.youtube.com/embed/poX_DVB711o" frameborder="0" allowfullscreen></iframe>
@@ -96,11 +113,22 @@
         </section>
 
         <section>
-          <h2>Option: use existing data</h2>
-          Some public EEG data sets exist - UCSD has a <a href="https://sccn.ucsd.edu/~arno/fam2data/publicly_available_EEG_data.html">good collection</a>.
-          We'll use the 2015 Music BCI data set available from <a href="http://bnci-horizon-2020.eu/database/data-sets">BCNI Horizon</a> (set #15), with paper
-          describing the data from <a href="http://doc.ml.tu-berlin.de/bbci/BNCIHorizon2020-MusicBCI/BNCI_MusicBCI.pdf">TU Berlin</a>. <br /> <br />
-          <b>Warning: 554Mb!</b> EEG data is big...
+          <section>
+            <h2>Option: use existing data</h2>
+            Some public EEG data sets exist - UCSD has a <a href="https://sccn.ucsd.edu/~arno/fam2data/publicly_available_EEG_data.html">good collection</a>.
+            We'll use the 2015 Music BCI data set available from <a href="http://bnci-horizon-2020.eu/database/data-sets">BCNI Horizon</a> (set #15), with paper
+            describing the data from <a href="http://doc.ml.tu-berlin.de/bbci/BNCIHorizon2020-MusicBCI/BNCI_MusicBCI.pdf">TU Berlin</a>. <br /> <br />
+            <b>Warning: 554Mb!</b> EEG data is big...
+          </section>
+          <section>
+            <h2>Shortcut</h2>
+            Preprocessed files for a single subject are available here:
+            <ol>
+              <li>Signals</li>
+              <li>Events</li>
+              <li>Locations</li>
+            </ol>
+          </section>
         </section>
 
         <section>
@@ -364,31 +392,50 @@ sys	0m3.841s</code></pre>
             <h2>Muse (via LSL)</h2>
             To get Muse working with OpenVibe, the simplest way is to get them both talking the LSL format
             (= <a href="https://github.com/sccn/labstreaminglayer"><b>L</b>ab <b>S</b>treaming <b>L</b>ayer</a>). <br />
+            <br />
             <h4>1) Muse -> LSL</h4>
-            <pre><code data-trim>$~/muse$ muse-io --lsl-eeg muselsl</code></pre>
-            <h4>2) LSL -> Aquisition Server</h4>
-            TODO - image <br />
+            <pre><code data-trim>$~/muse$ muse-io --device DEVICE_ID --lsl-eeg muse </code></pre>
+            Enter your Muse bluetooth ID for DEVICE_ID, for example mine is 00:06:66:68:9F:96 <br />
             <b>N.B:</b> With newer Muse, you'll want the <a href="https://github.com/alexandrebarachant/muse-lsl">muse-lsl</a> library.
           </section>
           <section>
+            <h4>2) LSL -> Aquisition Server</h4>
+            <img src='./img/lslServer.png' />
+            <ol>
+              <li>Select signal stream to the name above, and marker to None.</li>
+              <li><b>Connect</b> to your device, make sure it's successful</li>
+              <li><b>Play</b> to start the streaming</li>
+            </ol>
+          </section>
+          <section>
             <h4>View in designer</h4>
-            TODO
+            <ul>
+              <li><i>Acquisition client</i> box to read from the server</li>
+              <li>Connect to the stream visualizer (or whatever you like)</li>
+            </ul>
+            <img src='./img/museLive.png' />
           </section>
           <section>
             <h2>OpenBCI</h2>
-            OpenBCI makes this even easier, with the Acquisition server supporting it by default.<br />
-            <h4>1) OpenBCI to 'PC' mode and plug in UBS</h4>
+            OpenBCI makes this even easier, <br />with the Acquisition server supporting it by default.<br />
+            <h4>1) OpenBCI to 'PC' mode and plug in USB</h4>
+            <img src='./img/openBCIUSB.png' />
+          </section>
+          <section>
             <h4>2) Aquisition server:</h4>
-            TODO - image <br />
+            <img src='./img/openBCIServer.png' />
           </section>
           <section>
             <h2>Saving...</h2>
-            TODO
+            <div style="display: flex">
+              <img src='./img/saveFile.png' />
+              <div style='align-self: center'> 🢂 </div>
+              <img src='./img/loadFile.png' />
+            </div>
+            <div style="clear: float;" />
+            <br />
+            <b>N.B.</b>: Need to set the types to Signal
           </section>
-        </section>
-
-        <section>
-          <h2>Bonus: Connectivity measures?</h2>
         </section>
 
         <section>
@@ -404,17 +451,17 @@ sys	0m3.841s</code></pre>
             </ul>
           </section>
           <section>
+            <h2>Thanks!</h2>
+            padsterpat@gmail.com <br />
+            https://github.com/padster <br />
+          </section>
+          <section>
             <h2>More on <a href="http://neurotechx.com/">NeuroTechX</a>...</h2>
             International non-profit building a community of neuro technology enthusiasts.
             <ul>
               <li>Join the slack: <a href="https://neurotechx.herokuapp.com/">https://neurotechx.herokuapp.com/</a></li>
               <li>Keep an eye on future events in Vancouver, posted on <a href="https://www.meetup.com/NeuroTechVAN/">Meetup</a></li>
             </ul>
-          </section>
-          <section>
-            <h2>Thanks!</h2>
-            padsterpat@gmail.com <br />
-            https://github.com/padster <br />
           </section>
         </section>
 
