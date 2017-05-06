@@ -234,32 +234,6 @@ sys	0m3.841s</code></pre>
 
         <section>
           <section>
-            <h2><i>Concept</i>: ICA</h2>
-            <b>I</b>ndependant <b>C</b>omponent <b>A</b>nalysis is where multiple signals can be separated out into independant parts. Useful for:
-            <ul>
-              <li>Noise reduction: find the 'blink' component, and remove it</li>
-              <li>Virtual channels: e.g. reduce to 'frontal' signal, 'left hemisphere', ...</li>
-            </ul>
-          </section>
-          <section>
-            <h2>Localization</h2>
-            There is a standard '10-20' placement system:
-            <img src='./img/1020.gif' /> <br />
-            For this example, we'll look at F7/F9, and P8/P10.
-          </section>
-          <section>
-            <h2>In Designer</h2>
-            <ul>
-              <li>Apply channel selection for P8;P10;F7;F9</li>
-              <li>Run through <i>Independant Component Analysis</i> box</li>
-            </ul>
-            <img src='./img/ica.png' />
-            IC1 ~ front left, IC2 ~ back right.
-          </section>
-        </section>
-
-        <section>
-          <section>
             <h2><i>Concept</i>: Events</h2>
             Some applications for EEG look at signal after an event happens. <br />
             OpenVibe calls these <i>'stimulations'</i>.
@@ -343,6 +317,32 @@ sys	0m3.841s</code></pre>
               <li><i>Epoch Variance</i> box allows the calculation of the mean and variance across multiple epochs.</li>
               <li><i>ERP plot</i> can also save the result to file on a particular signal.</li>
             </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2><i>Concept</i>: ICA</h2>
+            <b>I</b>ndependant <b>C</b>omponent <b>A</b>nalysis is where multiple signals can be separated out into independant parts. Useful for:
+            <ul>
+              <li>Noise reduction: find the 'blink' component, and remove it</li>
+              <li>Virtual channels: e.g. reduce to 'frontal' signal, 'left hemisphere', ...</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Localization</h2>
+            There is a standard '10-20' placement system:
+            <img src='./img/1020.gif' /> <br />
+            For this example, we'll look at F7/F9, and P8/P10.
+          </section>
+          <section>
+            <h2>In Designer</h2>
+            <ul>
+              <li>Apply channel selection for P8;P10;F7;F9</li>
+              <li>Run through <i>Independant Component Analysis</i> box</li>
+            </ul>
+            <img src='./img/ica.png' />
+            IC1 ~ front left, IC2 ~ back right.
           </section>
         </section>
 
